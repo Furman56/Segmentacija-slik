@@ -35,7 +35,6 @@ def kmeans(slika, k=3, iteracije=10):
     
     return segmented_image  
 
-    
 
 def meanshift(slika, velikost_okna, dimenzija):
     '''Izvede segmentacijo slike z uporabo metode mean-shift.'''
