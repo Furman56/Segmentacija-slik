@@ -12,6 +12,29 @@ def kmeans(slika, k=3, iteracije=10):
     
     # Inicializira naključno st centrov iz pikslov
     centers = pixels[np.random.choice(pixels.shape[0], k, replace=False)] 
+
+    # Iterira kmeans algoritem
+    for _ in range(iteracije):
+        # Izračuna Manhattanovo razdaljo med vsakim pixelom in centri
+        distances = np.abs(pixels[:, np.newaxis] - centers).sum(axis=2)
+        
+        # Dodeli vsak pixel najbližjemu centru
+        labels = np.argmin(distances, axis=1)
+        
+        # Posodobi centre kot povprečje vseh pikslov, ki so dodeljeni temu centru
+        new_centers = np.array([pixels[labels == i].mean(axis=0) if np.any(labels == i) else centers[i] for i in range(k)])
+        
+        # Preveri konvergenco (če se centri ne spreminjajo več, break)
+        if np.allclose(centers, new_centers, atol=1e-4):
+            break
+        centers = new_centers  # Posodobi centre za naslednjo iteracijo
+    
+    # Ustvari segmentirano sliko
+    segmented_pixels = centers[labels].astype(np.uint8)  
+    segmented_image = segmented_pixels.reshape(h, w, d)  
+    
+    return segmented_image  
+
     
 
 def meanshift(slika, velikost_okna, dimenzija):
