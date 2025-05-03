@@ -35,14 +35,35 @@ def kmeans(slika, k=3, iteracije=10):
     
     return segmented_image  
 
-
 def meanshift(slika, velikost_okna, dimenzija):
     '''Izvede segmentacijo slike z uporabo metode mean-shift.'''
     pass
 
 def izracunaj_centre(slika, izbira, dimenzija_centra, T):
     '''Izračuna centre za metodo kmeans.'''
-    pass
+    
+    # Pridobi dimenzije slike
+    h, w, d = slika.shape 
+    
+    # Pretvori sliko v 2D matriko kjer je vsaka vrstica en pixel
+    pixels = slika.reshape(-1, d)  
+    
+    # Če je dimenzija centra večja od 3, dodaj koordinate (x, y) k barvnim vrednostim
+    if dimenzija_centra > 3:
+        x_coords, y_coords = np.meshgrid(np.arange(w), np.arange(h))  
+        coords = np.stack((y_coords, x_coords), axis=-1).reshape(-1, 2) 
+        pixels = np.hstack((pixels, coords))
+
+        # Izberi centre naključno, vendar z upoštevanjem praga T
+    centers = []  
+    while len(centers) < dimenzija_centra:
+        candidate = pixels[np.random.choice(pixels.shape[0])]
+        
+        # Preveri, ali je kandidat dovolj oddaljen od že izbranih centrov
+        if all(np.linalg.norm(candidate - center) > T for center in centers):
+            centers.append(candidate) 
+    
+    return np.array(centers) 
 
 if __name__ == "__main__":
     pass
