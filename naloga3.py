@@ -77,6 +77,19 @@ def meanshift(slika, velikost_okna, dimenzija, max_iter=100, min_cd=5):
         # Dodaj konvergenčno točko v seznam
         converged_points.append(point)
 
+    # Združi konvergenčne točke v centre glede na min_cd
+    centers = []
+    for point in converged_points:
+        if all(np.linalg.norm(point - center) > min_cd for center in centers):
+            centers.append(point)
+    
+    # Ustvari segmentirano sliko
+    labels = np.argmin(np.linalg.norm(pixels[:, np.newaxis] - centers, axis=2), axis=1)
+    segmented_pixels = np.array(centers)[labels].astype(np.uint8)
+    segmented_image = segmented_pixels.reshape(h, w, d)
+    
+    return segmented_image
+
 
 def izracunaj_centre(slika, izbira, dimenzija_centra, T):
     '''Izračuna centre za metodo kmeans.'''
