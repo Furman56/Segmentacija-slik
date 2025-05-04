@@ -140,4 +140,29 @@ def izracunaj_centre(slika, izbira, dimenzija_centra, T):
     return np.array(centers) 
 
 if __name__ == "__main__":
-    pass
+    image_path = "slike/peppers.jpg"
+    slika = cv.imread(image_path)
+    
+    if slika is None:
+        print(f"Napaka: Slike '{image_path}' ni mogoče naložiti.")
+    else:
+        slika = cv.cvtColor(slika, cv.COLOR_BGR2RGB)
+        
+        # Izvedi segmentacijo z uporabo kmeans
+        kmeans_segmented = kmeans(slika, k=3, iteracije=10)
+        
+        # Izvedi segmentacijo z uporabo meanshift
+        meanshift_segmented = meanshift(slika, velikost_okna=30, dimenzija=3, max_iter=100, min_cd=5)
+        
+        # Pretvori slike nazaj v BGR za prikaz 
+        original_bgr = cv.cvtColor(slika, cv.COLOR_RGB2BGR)
+        kmeans_bgr = cv.cvtColor(kmeans_segmented, cv.COLOR_RGB2BGR)
+        meanshift_bgr = cv.cvtColor(meanshift_segmented, cv.COLOR_RGB2BGR)
+        
+        cv.imshow("Originalna slika", original_bgr)
+        cv.imshow("KMeans segmentacija", kmeans_bgr)
+        cv.imshow("MeanShift segmentacija", meanshift_bgr)
+        
+        cv.waitKey(0)
+        
+        cv.destroyAllWindows()
